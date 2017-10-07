@@ -1,6 +1,6 @@
-function init() {
+    function init() {
     // caution: 'game' is global
-    game = new Phaser.Game(400, 308, Phaser.AUTO, 'Jump Man', {
+    game = new Phaser.Game(400, 408, Phaser.AUTO, 'Jump Man', {
         preload: preload,
         create: create,
         update: update
@@ -9,7 +9,10 @@ function init() {
 
 function preload() {
     // load level stuff
-    game.load.tilemap('level0Tilemap', 'SpriteSheets/Level0.json', null,
+    // game.load.tilemap('level0Tilemap', 'SpriteSheets/Level0.json', null,
+        // Phaser.Tilemap.TILED_JSON);
+    // game.load.image('level0Image', 'SpriteSheets/Level0SpriteSheet.png');
+    game.load.tilemap('level0Tilemap', 'SpriteSheets/NewLevel1.json', null,
         Phaser.Tilemap.TILED_JSON);
     game.load.image('level0Image', 'SpriteSheets/Level0SpriteSheet.png');
 
@@ -23,16 +26,21 @@ function preload() {
     // load weapon projectile sprite sheet
     game.load.spritesheet('Projectile', 'SpriteSheets/JumpManSpriteSheet.png',
         32, 32, 9);
+
+    game.load.image('arrowButton', 'SpriteSheets/arrow.png');
+    game.load.image('fireButton', 'SpriteSheets/aButton.png');
 };
+
 
 function create() {
     // create level stuff
     // caution all globals
     level = game.add.tilemap('level0Tilemap');
-    level.addTilesetImage('DummyTileset', 'level0Image');
+    // level.addTilesetImage('DummyTileset', 'level0Image');
+    level.addTilesetImage('terrain', 'level0Image');
     layer = level.createLayer(0);
     layer.resizeWorld();
-    level.setCollisionBetween(0, 1);
+    level.setCollisionBetween(0, 9);
 
     // create input method
     cursors = game.input.keyboard.createCursorKeys();
@@ -41,13 +49,58 @@ function create() {
     rightKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     downKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
 
+    // touch input
+    var yOffset = 330;
+    leftButton = game.add.button(30, 30 + yOffset, 'arrowButton', null);
+    leftButton.anchor.setTo(0.5, 0.5);
+    rightButton = game.add.button(90, 30 + yOffset, 'arrowButton', null);
+    rightButton.anchor.setTo(0.5, 0.5);
+    rightButton.angle = 180;
+    downButton = game.add.button(60, 60 + yOffset, 'arrowButton', null);
+    downButton.anchor.setTo(0.5, 0.5);
+    downButton.angle = 270;
+    fireButton = game.add.button(350, 40 + yOffset, 'fireButton', null);
+    fireButton.anchor.set(0.5, 0.5);
+    fireButton.scale.setTo(32/50, 32/50);
+
+    leftButton.fixedToCamera = true;
+    rightButton.fixedToCamera = true;
+    downButton.fixedToCamera = true;
+    fireButton.fixedToCamera = true;
+
+    // FIXME: this needs refactoring
+    leftButton.onInputDown.add(function () {
+        leftButton.isDown = true;
+    });
+    leftButton.onInputUp.add(function () {
+        leftButton.isDown = false;
+    });
+    rightButton.onInputDown.add(function () {
+        rightButton.isDown = true;
+    });
+    rightButton.onInputUp.add(function () {
+        rightButton.isDown = false;
+    });
+    downButton.onInputDown.add(function () {
+        downButton.isDown = true;
+    });
+    downButton.onInputUp.add(function () {
+        downButton.isDown = false;
+    });
+    fireButton.onInputUp.add(function () {
+        fireButton.isDown = true;
+    });
+    fireButton.onInputDown.add(function () {
+        fireButton.isDown = false;
+    });
+
     // create weapon
     weapon = game.add.weapon(1, 'Projectile');
     weapon.setBulletFrames(2, 2, true);
     weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
     weapon.bulletSpeed = 800;
     weapon.fireRate = 50;
-    weapon.bulletGravity.y = -900;
+    weapon.bulletGravity.y = -1100;
     weapon.fireAngle = Phaser.ANGLE_RIGHT;
 
     // create player
@@ -56,15 +109,16 @@ function create() {
     //game.add.sprite(10, 10, 'PlayerCharacter');
     weapon.trackSprite(player, 0, 0, false);
 
+
     // create enemies
     enemies = game.add.group();
     enemies.enableBody = true;
-    enemy = enemies.create(700, 550, 'Enemy');
+    enemy = enemies.create(100, 100, 'Enemy');
     configureConcreteEnemy(enemy);
 
     // init physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.physics.arcade.gravity.y = 900;
+    game.physics.arcade.gravity.y = 1100;
 
     game.camera.flash('#000000');
     game.stage.backgroundColor = 0xFFFFFF;
@@ -168,18 +222,18 @@ function PlayerCharacter(x, y) {
             // jump();
         // }
 
-        if (leftKey.isDown) {
+        if (leftKey.isDown || leftButton.isDown) {
             move(-1);
-        } else if (rightKey.isDown) {
+        } else if (rightKey.isDown || rightButton.isDown) {
             move(1);
         } else {
             move(0);
         }
 
-        if (downKey.isDown) {
+        if (downKey.isDown || downButton.isDown) {
             sprite.animations.play('pointWeaponDown');
         }
-        if (spaceKey.isDown) {
+        if (spaceKey.isDown || fireButton.isDown) {
             if (downKey.isDown) {
                 weapon.fireAngle = Phaser.ANGLE_DOWN;
                 jump();

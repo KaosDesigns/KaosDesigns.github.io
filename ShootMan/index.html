@@ -5,9 +5,10 @@
         <title>Jump Man</title>
 
         <script src="//cdn.jsdelivr.net/phaser/2.6.2/phaser.min.js"></script>
-        <script src="jumpman.js">
-
-        </script>
+        <script src="jumpman.js"></script>
+        <!-- <script src="jumpmanMain.js"></script> -->
+        <!-- <script src="splash.js"></script> -->
+        <!-- <script src="mainMenu.js"></script> -->
     </head>
 
     <body>
@@ -15,13 +16,16 @@
             window.onload = function() {
                 init();
             }
+            // var game = new Phaser.Game(400, 308, Phaser.AUTO, 'JumpMan');
+            // game.state.add('main', main);
+            // game.state.start('main');
         </script>
         Control keys:
         <ul>
             <li>W: left</li>
             <li>S: down</li>
             <li>D: right</li>
-            <li>SPACEBAR: fire</li>
+            <li>SPACEBAR, A: fire</li>
         </ul>
     </body>
 </html>
