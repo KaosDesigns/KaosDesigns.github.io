@@ -87,10 +87,10 @@ function create() {
     downButton.onInputUp.add(function () {
         downButton.isDown = false;
     });
-    fireButton.onInputUp.add(function () {
+    fireButton.onInputDown.add(function () {
         fireButton.isDown = true;
     });
-    fireButton.onInputDown.add(function () {
+    fireButton.onInputUp.add(function () {
         fireButton.isDown = false;
     });
 
