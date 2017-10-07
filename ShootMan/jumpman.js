@@ -234,7 +234,7 @@ function PlayerCharacter(x, y) {
             sprite.animations.play('pointWeaponDown');
         }
         if (spaceKey.isDown || fireButton.isDown) {
-            if (downKey.isDown) {
+            if (downKey.isDown || downKey.isDown) {
                 weapon.fireAngle = Phaser.ANGLE_DOWN;
                 jump();
             }
