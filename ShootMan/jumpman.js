@@ -33,6 +33,8 @@ function preload() {
 
 
 function create() {
+    game.scale.scaleMode =  Phaser.ScaleManager.SHOW_ALL;
+
     // create level stuff
     // caution all globals
     level = game.add.tilemap('level0Tilemap');
@@ -109,6 +111,8 @@ function create() {
     //game.add.sprite(10, 10, 'PlayerCharacter');
     weapon.trackSprite(player, 0, 0, false);
 
+    // TODO:
+    // create destructible walls
 
     // create enemies
     enemies = game.add.group();
